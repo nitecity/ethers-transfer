@@ -45,8 +45,8 @@ module.exports.addChain = async function() {
       if(rpc && rpc.startsWith('https://')) break;
       console.log(chalk.red('"RPC" is required and starts with "https://". Try again'));
     }
-    const wss = await question('WSS: ');
-    const chainId = await question('Chain Id: ');
+    const wss = await question('WSS (Optional): ');
+    const chainId = await question('Chain Id (Optional): ');
     let explorer;
     while(true){
       explorer = await question('Explorer: ');
@@ -60,8 +60,8 @@ module.exports.addChain = async function() {
       console.log(chalk.red('"Currency" is required. Try again'));
     }
 
-    const usdt = await question('USDT Contract: ');
-    const usdc = await question('USDC Contract: ');
+    const usdt = await question('USDT Contract (Optional): ');
+    const usdc = await question('USDC Contract (Optional): ');
     const inputObj = {
       chain,
       rpc,
