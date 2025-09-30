@@ -34,7 +34,7 @@ npm start
 
 You'll see a menu like:
 
-`
+``
 --- Welcome! What do you want to do? ---
 1. Transfer Native Token (e.g. ETH)
 2. Transfer ERC20 Token (e.g. USDT)
@@ -43,7 +43,7 @@ You'll see a menu like:
 5. Add New Chain
 6. Add New Private Key (Wallet)
 0. Exit
-`
+``
 
 ---
 
