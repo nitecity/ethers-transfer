@@ -81,7 +81,7 @@ module.exports.transferErc20 = async function() {
         console.log(yellow('Please wait...'));
         const receipt = await transactionResponse.wait();
         console.log(magenta.italic("Transaction confirmed in block:"), green(receipt.blockNumber));
-        console.log(green.bold(`✅ Success! View on Explorer: ${explorer}tx/${transactionResponse.hash}`));
+        console.log(green.bold(`✅ Success! View on Explorer: ${explorer}/tx/${transactionResponse.hash}`));
     } catch(error){
         console.error(red("❌ Error sending transaction:"), redBright(error && error.message ? error.message : String(error)));
     }

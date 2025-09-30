@@ -72,7 +72,7 @@ module.exports.transferNative = async function() {
         console.log(yellow('Please wait...'));
         const receipt = await transactionResponse.wait();
         console.log(chalk.italic.magenta("Transaction confirmed in block:"), green(receipt.blockNumber));
-        console.log(chalk.bold.green(`✅ Success! View on Explorer: `) + chalk.cyan.underline(`${explorer}tx/${transactionResponse.hash}`));
+        console.log(chalk.bold.green(`✅ Success! View on Explorer: `) + chalk.cyan.underline(`${explorer}/tx/${transactionResponse.hash}`));
     } catch(error) {
         console.error(red("❌ Error sending transaction:"), redBright(error && error.message ? error.message : String(error)));
     }
