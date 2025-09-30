@@ -1,8 +1,8 @@
-// ...existing code...
 const fs = require('fs').promises;
 const path = require('path');
 const chalk = require('chalk');
 const { question } = require('./utils');
+const fileName = 'chains.json';
 
 async function appendToJsonFile(filePath, newData) {
   try {
@@ -30,28 +30,54 @@ async function appendToJsonFile(filePath, newData) {
 }
 
 module.exports.addChain = async function() {
-  const file = path.resolve(__dirname, 'chains.json');
-
+  const file = path.resolve(__dirname, fileName);
+  const exists = await fs.access(file).then(() => true).catch(() => false);
+  let chains;
+  if(exists){
+    const data = await fs.readFile(file, 'utf8');
+    chains = JSON.parse(data);
+  }
+  
   try {
     let chain;
-    while(true){
-      chain = (await question('Chain: '))?.toLowerCase();
-      if(chain) break;
-      console.log(chalk.red('"Chain" name is required. Try again'))
+    while (true) {
+      chain = (await question('Chain: ')).toLowerCase();
+      if (!chain) {
+        console.log(chalk.red('"Chain" is required. Try again'));
+        continue;
+      }
+      if (chains && chains.find(c => c.chain === chain)) {
+        console.log(chalk.red(`Chain "${chain}" already exists. Try again.`));
+        continue;
+      }
+      break;
     }
     let rpc;
     while(true){
       rpc = await question('RPC: ');
-      if(rpc && rpc.startsWith('https://')) break;
-      console.log(chalk.red('"RPC" is required and starts with "https://". Try again'));
+      const regex = /^https:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+      if(regex.test(rpc)) break;
+      console.log(chalk.red('"RPC" format is not valid. Try again'));
     }
-    const wss = await question('WSS (Optional): ');
-    const chainId = await question('Chain Id (Optional): ');
+    let wss;
+    while(true){
+      wss = await question('WSS (Optional): ');
+      const regexWss = /^wss:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+      if(!wss) break;
+      if(regexWss.test(wss)) break;
+      console.log(chalk.red('"Websocket" format is not valid. Try again'));
+    }
+    let chainId = await question('Chain Id (Optional): ');
+    if(chainId && isNaN(parseInt(chainId))){
+      console.log(chalk.red('"Chain Id" must be a number. Setting to "null"'));
+      chainId = null;
+    }
     let explorer;
     while(true){
       explorer = await question('Explorer: ');
-      if(explorer && explorer.startsWith('https://')) break;
-      console.log(chalk.red('"Explorer" is required and starts with "https://". Try again'));
+      const regexExplorer = /^https:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+      if(regexExplorer.test(explorer)) break;
+      console.log(chalk.red('"Explorer" format is not valid. Try again'));
     }
     let currency;
     while(true){
@@ -74,10 +100,10 @@ module.exports.addChain = async function() {
     }
     await appendToJsonFile(file, inputObj);
 
-    console.log('Saved response to', file);
+    console.log(chalk.green('\nSaved data to -> '), file);
+    console.log(chalk.cyan(`You can modify the data in ${fileName}.\n`));
   } catch (err) {
     console.error('Error:', err.message || err);
-    process.exit(1);
   }
 }
 
